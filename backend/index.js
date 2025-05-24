@@ -59,7 +59,7 @@ app.get('/stocks', ensureTokenValid, async (req, res) => {
 // New route for stock price history
 app.get('/stocks/:symbol/history', ensureTokenValid, async (req, res) => {
   const { symbol } = req.params;
-  const { minutes = 50 } = req.query; // default 50 minutes if not provided
+  const { minutes = 50 } = req.query;
   try {
     const response = await axios.get(`http://20.244.56.144/evaluation-service/stocks/${symbol}`, {
       headers: { Authorization: `Bearer ${accessToken}` },

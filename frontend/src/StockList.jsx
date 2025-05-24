@@ -10,7 +10,6 @@ const StockList = () => {
       try {
         const response = await axios.get("http://localhost:5000/stocks");
         const stockObject = response.data.stocks;
-        // Convert object to array of stocks with random price and change values
         const stockArray = Object.entries(stockObject).map(([companyName, symbol]) => ({
           companyName,
           symbol,
