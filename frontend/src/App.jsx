@@ -1,13 +1,15 @@
-import StockList from "./StockList"
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import StockList from "./StockList";
+import StockDetails from "./StockDetails";
 
-function App() {
+const App = () => (
+  <Router>
+    <Routes>
+      <Route path="/" element={<StockList />} />
+      <Route path="/stocks/:symbol" element={<StockDetails />} />
+    </Routes>
+  </Router>
+);
 
-  return (
-    <>
-    <StockList/>
-     
-    </>
-  )
-}
-
-export default App
+export default App;

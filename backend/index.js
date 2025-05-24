@@ -1,13 +1,12 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require("cors");
 
 const app = express();
 const PORT = 5000;
-const cors = require("cors");
+
 app.use(cors());
 
-
-// Updated credentials
 const CLIENT_DATA = {
   email: "927622bit090@mkce.ac.in",
   name: "saran s",
@@ -17,11 +16,9 @@ const CLIENT_DATA = {
   clientSecret: "HSAEtjCEAWMSfKHK"
 };
 
-// Variables to store token and expiry
 let accessToken = null;
 let tokenExpiry = 0;
 
-// Function to fetch token
 async function fetchAccessToken() {
   try {
     const response = await axios.post('http://20.244.56.144/evaluation-service/auth', {
@@ -34,17 +31,13 @@ async function fetchAccessToken() {
     });
 
     accessToken = response.data.access_token;
-    console.log("Access Token:", accessToken);
-    // If expires_in is provided by API, better to use that
-    // But here, assume 1 hour from now
-    tokenExpiry = Date.now() + 3600 * 1000; 
+    tokenExpiry = Date.now() + 3600 * 1000; // 1 hour expiry
     console.log("✅ Access Token Fetched");
   } catch (error) {
     console.error("❌ Error fetching token:", error.response?.data || error.message);
   }
 }
 
-// Middleware to check token validity
 async function ensureTokenValid(req, res, next) {
   if (!accessToken || Date.now() > tokenExpiry) {
     await fetchAccessToken();
@@ -52,19 +45,28 @@ async function ensureTokenValid(req, res, next) {
   next();
 }
 
-// Route to fetch stocks
 app.get('/stocks', ensureTokenValid, async (req, res) => {
   try {
-    console.log("Fetching stocks...");
     const response = await axios.get('http://20.244.56.144/evaluation-service/stocks', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
+      headers: { Authorization: `Bearer ${accessToken}` }
     });
-
     res.json(response.data);
   } catch (error) {
-    console.error("Error fetching stocks:", error.response?.data || error.message);
+    res.status(500).json({ error: error.response?.data || error.message });
+  }
+});
+
+// New route for stock price history
+app.get('/stocks/:symbol/history', ensureTokenValid, async (req, res) => {
+  const { symbol } = req.params;
+  const { minutes = 50 } = req.query; // default 50 minutes if not provided
+  try {
+    const response = await axios.get(`http://20.244.56.144/evaluation-service/stocks/${symbol}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      params: { minutes }
+    });
+    res.json(response.data);
+  } catch (error) {
     res.status(500).json({ error: error.response?.data || error.message });
   }
 });
