@@ -32,9 +32,9 @@ async function fetchAccessToken() {
 
     accessToken = response.data.access_token;
     tokenExpiry = Date.now() + 3600 * 1000; // 1 hour expiry
-    console.log("✅ Access Token Fetched");
+    console.log("Access Token Fetched");
   } catch (error) {
-    console.error("❌ Error fetching token:", error.response?.data || error.message);
+    console.error(" Error fetching token:", error.response?.data || error.message);
   }
 }
 
@@ -65,6 +65,7 @@ app.get('/stocks/:symbol/history', ensureTokenValid, async (req, res) => {
       headers: { Authorization: `Bearer ${accessToken}` },
       params: { minutes }
     });
+    console.log(response);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: error.response?.data || error.message });
@@ -72,5 +73,5 @@ app.get('/stocks/:symbol/history', ensureTokenValid, async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(` Server running at http://localhost:${PORT}`);
 });
