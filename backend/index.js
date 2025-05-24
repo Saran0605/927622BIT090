@@ -2,7 +2,10 @@ const express = require('express');
 const axios = require('axios');
 
 const app = express();
-const PORT = 3000;
+const PORT = 5000;
+const cors = require("cors");
+app.use(cors());
+
 
 // Updated credentials
 const CLIENT_DATA = {
